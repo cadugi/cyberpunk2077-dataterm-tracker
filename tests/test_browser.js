@@ -1,0 +1,21 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+(async()=>{
+ const options={headless:true};if(process.env.BROWSER_EXECUTABLE)options.executablePath=process.env.BROWSER_EXECUTABLE;
+ const browser=await chromium.launch(options);const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=[],requests=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>requests.push(r.url()));
+ await page.goto('file:///'+path.resolve('index.html').replaceAll('\\','/'));assert.equal(await page.locator('#pending').textContent(),'—');assert.equal(await page.locator('.destination').count(),0);assert.equal(await page.locator('#download').isDisabled(),true);
+ const ref=JSON.parse(fs.readFileSync('data/reference.json','utf8'));const pts=ref.points.filter(p=>p.verified_destination).slice(0,3).map(p=>({id:p.id,marker:'#synthetic-'+p.id,is_ep1:false}));
+ const ex={schema:1,game_version:'2.50',source:'synthetic',slot:'DEMO — datos sintéticos',complete:true,registered_count:pts.length,points:pts,errors:[]};
+ await page.locator('#import').setInputFiles({name:'synthetic.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(ex))});assert.equal(await page.locator('#discovered').textContent(),'3');assert.equal(await page.locator('#pending').textContent(),String(ref.validated_base_targets-3));
+ await page.locator('#search').fill('Presa');assert.equal(await page.locator('.destination h4').filter({hasText:/^Presa$/}).count(),1);await page.locator('#search').fill('');
+ const preserve=await page.locator('#pending').textContent();await page.locator('#import').setInputFiles({name:'broken.json',mimeType:'application/json',buffer:Buffer.from('{')});assert.equal(await page.locator('#error').isVisible(),true);assert.equal(await page.locator('#pending').textContent(),preserve);
+ await page.locator('#import').setInputFiles({name:'partial.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({...ex,complete:false}))});assert.equal(await page.locator('#pending').textContent(),'0');
+ await page.locator('#import').setInputFiles({name:'synthetic.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(ex))});
+ await page.locator('#search').fill('Presa');await page.locator('.destination button').first().click();
+ const frame=page.frameLocator('#local-map');await frame.locator('#tooltip').waitFor({state:'visible'});assert.match(await frame.locator('#tooltip').textContent(),/^Presa/);
+ const original=await frame.locator('svg').getAttribute('viewBox');await frame.locator('svg').hover();await page.mouse.wheel(0,-250);await page.waitForTimeout(150);assert.notEqual(await frame.locator('svg').getAttribute('viewBox'),original);
+ await frame.locator('#reset').click();assert.equal(await frame.locator('svg').getAttribute('viewBox'),'-4300 -4800 10000 11000');
+ await page.locator('#search').fill('');const downloadPromise=page.waitForEvent('download');await page.locator('#download').click();const downloaded=await downloadPromise;assert.match(downloaded.suggestedFilename(),/csv$/);
+ assert.equal(requests.some(u=>/^https?:/.test(u)),false);assert.deepEqual(errors,[]);
+ await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ console.log('Browser: clean startup, synthetic import, error preservation, partial extraction, filters, map focus/zoom/reset, CSV, mobile and zero external requests: PASS');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

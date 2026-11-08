@@ -1,0 +1,17 @@
+output/
+backups/
+node_modules/
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+.venv/
+.env*
+*.dat
+metadata*.json
+extraction.json
+comparison.json
+RESULTADO.md
+*.log
+private-tests/

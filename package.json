@@ -1,0 +1,1 @@
+{"name":"cyberpunk2077-dataterm-tracker","version":"0.1.0","private":true,"license":"MIT","scripts":{"test":"node tests/test_compare.js"},"devDependencies":{"playwright":"1.65.0","luaparse":"0.3.1"}}
