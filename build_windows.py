@@ -9,7 +9,7 @@ def main():
         destination=str(Path(name).parent)
         args+=['--add-data',f'{ROOT/name};{destination}']
     args+=[str(ROOT/'tracker.py')];subprocess.run(args,cwd=ROOT,check=True)
-    release=ROOT/'dist';exe=release/'Cyberpunk-Dataterm-Tracker.exe';archive=release/'Cyberpunk-Dataterm-Tracker-v0.2.0-Windows-x64.zip'
+    release=ROOT/'dist';exe=release/'Cyberpunk-Dataterm-Tracker.exe';archive=release/'Cyberpunk-Dataterm-Tracker-v0.3.0-Windows-x64.zip'
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED) as z:
         for p in [exe,ROOT/'README.md',ROOT/'LICENSE',ROOT/'THIRD_PARTY_NOTICES.md']:
             z.write(p,p.name)

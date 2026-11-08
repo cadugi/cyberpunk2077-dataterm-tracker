@@ -62,3 +62,7 @@ This is an AI-assisted preview, not a guarantee of perfect extraction for every 
 ## v0.2.0 localization
 
 English is the default even with a Spanish browser locale. Browser tests cover switching loaded results and the offline map between English and Spanish, retaining comparison counts, searching bilingual names, translated error paths, CSV download, and persistence after reload. Language changes do not change discovery evidence or missing-point rules. The optional CET exporter has bilingual controls but remains untested inside the game.
+
+## v0.3.0 frontend redesign
+
+The redesigned frontend passed all 12 Python tests, JavaScript classification tests and the headless Edge browser workflow on Windows: clean startup, JSON import, error preservation, partial-extraction safety, bilingual search and language switching, map focus/zoom/reset, CSV export, mobile width and no automatic external network requests. The save parser, reference catalog and comparison logic are unchanged from v0.2.0.

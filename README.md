@@ -55,6 +55,12 @@ The public catalog currently verifies **156 base record IDs against typed termin
 
 There are published lists with different totals, duplicated names and old metro names. They were cross-checked as secondary references, not used to manufacture missing IDs. See [catalog methodology and sources](docs/VALIDATION.md).
 
+## Legal notice
+
+This is an **unofficial fan-made tool**. It is not affiliated with, sponsored or endorsed by CD PROJEKT S.A. *Cyberpunk 2077*, its logo, names, locations and related marks are trademarks or property of CD PROJEKT S.A. © CD PROJEKT S.A. All rights reserved. Location names are cited only to identify destinations.
+
+The interface's logo, icons, effects and artwork are **original** and inspired by the genre's visual language; no logos, images, fonts, audio or game files are included or redistributed. Please review CD PROJEKT RED's current fan-content guidelines before distributing builds or derivative works.
+
 ## Safety and privacy
 
 The reader copies the selected save, parses the copy and verifies that original and copy hashes stay unchanged. It disables the vendored parser's save-writing method. It does not unlock dataterms, teleport V, set quest facts, edit stats, install mods, alter original game files, or invoke achievement operations.
@@ -108,3 +114,7 @@ English is the default throughout the interface and offline map. Choose **Españ
 The Windows reader offers a language choice before the save picker. For command-line use, pass `--lang en` (default) or `--lang es`. Each extraction creates `REPORT.md` in English and `RESULTADO.md` in Spanish. The generated dashboard starts in the reader's language unless the browser already has a saved preference. JSON keys and state codes remain stable for compatibility; translated CSV includes `state_code` alongside the readable status. Game record IDs are never translated.
 
 The optional external street-map iframe uses the map provider's own language settings. It is loaded only when requested.
+
+## v0.3.0
+
+Redesigned offline frontend with a cyberpunk-inspired visual theme, responsive destination cards, refreshed embedded map styling and bilingual import notifications. English remains the default with a Spanish selector. Save parsing, reference IDs and conservative missing-point classification are unchanged.
