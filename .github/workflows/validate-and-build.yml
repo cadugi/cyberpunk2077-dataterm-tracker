@@ -47,7 +47,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.1.0 --repo "$env:GITHUB_REPOSITORY" 2>$null
+          gh release view v0.2.0 --repo "$env:GITHUB_REPOSITORY" 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create v0.1.0 dist/*.zip dist/SHA256SUMS.txt --repo "$env:GITHUB_REPOSITORY" --target "$env:GITHUB_SHA" --prerelease --title "v0.1.0 — Missing Fast Travel Points / Frequent Flyer Tracker" --notes "AI-assisted preview. Read-only local save reader for verified Cyberpunk 2077 2.50 format 277/2500. Includes offline schematic map and optional official map iframe. Unsigned Windows executable. Please read README and docs/VALIDATION.md before use."
+            gh release create v0.2.0 dist/*.zip dist/SHA256SUMS.txt --repo "$env:GITHUB_REPOSITORY" --target "$env:GITHUB_SHA" --prerelease --title "v0.2.0 — Missing Fast Travel Points / Frequent Flyer Tracker" --notes "AI-assisted preview. English by default with a Spanish language selector. Read-only local save reader for verified Cyberpunk 2077 2.50 format 277/2500. Includes offline schematic map and optional official map iframe. Unsigned Windows executable. Please read README and docs/VALIDATION.md before use."
           }

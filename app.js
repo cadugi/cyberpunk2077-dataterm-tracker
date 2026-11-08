@@ -1,68 +1,50 @@
 'use strict';
-const el = id => document.getElementById(id);
-let extraction = window.TRACKER_EXTRACTION;
-const reference = window.TRACKER_REFERENCE;
-let report;
-const normalize = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-function textNode(tag, text, cls) { const n=document.createElement(tag); n.textContent=text; if(cls)n.className=cls; return n; }
-function refresh() {
-  if(!extraction){report={rows:[]};el('slot').textContent='Elige tu guardado con el lector o importa su JSON';el('source').textContent='No hay una partida precargada. No se envían guardados a Internet.';el('catalog').textContent=`${reference.location_groups_total} grupos de ubicaciones · ${reference.points.length} registros internos`;el('quality').textContent=`${reference.validated_base_targets} destinos base con terminal comprobado. Las ausencias sin evidencia permanecen NO VERIFICADAS.`;el('download').disabled=true;render();syncMap();return;}
-  report = TrackerCompare.compare(reference,extraction);
-  el('download').disabled=false;
-  el('registered').textContent=report.registered_count;
-  el('catalog').textContent=`${reference.location_groups_total} grupos de ubicaciones · ${report.catalog_total} registros internos`;
-  el('discovered').textContent=report.counts.DESCUBIERTOS;
-  el('pending').textContent=report.counts.PENDIENTES;
-  el('unknown').textContent=report.counts['NO VERIFICADOS'];
-  el('slot').textContent=extraction.source==='cet'?'Extracción CET':`Guardado ${extraction.slot||'sin nombre'}`;
-  el('source').textContent=`Guardado: ${extraction.save_modified_at||'fecha no disponible'} · Extraído: ${extraction.extracted_at||'Sin fecha'} · ${extraction.source==='cet'?'Registro en memoria':'Copia del guardado'}`;
-  const known = report.achievement_count !== null;
-  const pct = known ? Math.min(100,100*report.achievement_count/report.achievement_threshold) : 0;
-  el('percentage').textContent=known?pct.toFixed(1)+' %':'Sin verificar';
-  el('progress').value=pct;
-  el('achievement').textContent=known?`${report.achievement_count} nodos que cuentan / umbral ${report.achievement_threshold}. Último contador enviado por el juego: ${extraction.last_achievement_count??'no leído'}. El juego actualiza el logro en recuentos pares; este porcentaje no es el estado de Steam.`:'El catálogo o la extracción necesitan revisión. No se calcula un porcentaje fiable.';
-  el('quality').textContent=report.complete?'Extracción completa. Los ausentes solo se consideran pendientes cuando también está verificado su terminal real.':'Extracción parcial o diferencias con el catálogo: se desactiva la clasificación de nuevos pendientes. '+(extraction.errors||[]).join(' ');
-  render();syncMap();
+const el=id=>document.getElementById(id),t=(id,params)=>I18n.t(id,params);
+let extraction=window.TRACKER_EXTRACTION,report,lastError=null,pendingMapFocus=null;
+const reference=window.TRACKER_REFERENCE;
+const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function textNode(tag,text,cls){const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;}
+function showError(){el('error').hidden=!lastError;if(lastError)el('error').textContent=t('errorPrefix',{message:t(lastError.key,lastError.params)});}
+function refresh(){
+ I18n.apply();el('catalog').textContent=t('catalog',{groups:reference.location_groups_total,records:reference.points.length});
+ if(!extraction){report={rows:[]};el('slot').textContent=t('chooseSave');el('source').textContent=t('noSave');el('quality').textContent=t('coverage',{count:reference.validated_base_targets});el('download').disabled=true;render();syncMap();showError();return;}
+ report=TrackerCompare.compare(reference,extraction);el('download').disabled=false;
+ for(const [id,value]of Object.entries({registered:report.registered_count,discovered:report.counts.DESCUBIERTOS,pending:report.counts.PENDIENTES,unknown:report.counts['NO VERIFICADOS']}))el(id).textContent=value;
+ el('slot').textContent=extraction.source==='cet'?t('cetExtraction'):t('saveSlot',{slot:extraction.slot||t('unnamed')});
+ el('source').textContent=t('source',{saved:I18n.date(extraction.save_modified_at),extracted:I18n.date(extraction.extracted_at),method:t(extraction.source==='cet'?'memory':'saveCopy')});
+ const known=report.achievement_count!==null,pct=known?Math.min(100,100*report.achievement_count/report.achievement_threshold):0;
+ el('percentage').textContent=known?I18n.number(pct,1)+' %':t('NO VERIFICADOS');el('progress').value=pct;
+ el('achievement').textContent=known?t('progress',{count:report.achievement_count,threshold:report.achievement_threshold,last:extraction.last_achievement_count??t('notRead')}):t('progressUnknown');
+ el('quality').textContent=t(report.complete?'complete':'incomplete');if(extraction.errors?.length)el('quality').textContent+=' '+extraction.errors.join(' ');
+ render();syncMap();showError();
 }
-function render() {
-  const q=normalize(el('search').value),state=el('state').value,scope=el('scope').value;
-  const rows=report.rows.filter(p => (state==='all'||p.state===state)&&(scope==='all'||p.scope===scope)&&normalize([p.name,p.name_en,p.record,p.id,p.district,p.subdistrict].join(' ')).includes(q));
-  el('shown').textContent=`${rows.length} destinos`;
-  const container=el('results');container.replaceChildren();
-  if(!rows.length){container.append(textNode('div','No hay destinos con estos filtros.','empty'));return;}
-  const groups=new Map();for(const p of rows){if(!groups.has(p.district))groups.set(p.district,[]);groups.get(p.district).push(p);}
-  for(const [district,points] of groups){
-    const section=textNode('section','','district');section.append(textNode('h3',`${district} · ${points.length}`));
-    for(const p of points){
-      const card=textNode('article','','destination');const name=document.createElement('div');name.append(textNode('h4',p.name));if(p.name_en!==p.name)name.append(textNode('span',p.name_en,'alias'));card.append(name,textNode('span',p.state.replaceAll('_',' '),'badge '+p.state.replaceAll(' ','_')));
-      const details=textNode('div','','details');details.append(textNode('code',`${p.record||p.id} · ID ${p.id}`),textNode('p',p.reason));
-      if(p.subdistrict&&p.subdistrict!==p.district)details.append(textNode('p','Zona: '+p.subdistrict));
-      if(p.note&&p.note!==p.reason)details.append(textNode('p',p.note));
-      if(p.locations?.length)details.append(textNode('span','Ubicación aproximada (X, Y, Z): '+p.locations.map(x=>x.map(v=>v.toFixed(1)).join(', ')).join(' / '),'coordinates'));
-      else if(p.state==='PENDIENTES')details.append(textNode('span','Sin coordenadas verificadas.','coordinates'));
-      if(p.state==='PENDIENTES'&&p.locations?.length){
-        const nearby=report.rows.filter(x=>x.state==='DESCUBIERTOS'&&x.scope==='base'&&x.locations?.length).map(x=>({name:x.name,d:Math.min(...p.locations.flatMap(a=>x.locations.map(b=>Math.hypot(a[0]-b[0],a[1]-b[1]))))})).sort((a,b)=>a.d-b.d).slice(0,2);
-        if(nearby.length)details.append(textNode('p','Cerca de puntos descubiertos: '+nearby.map(x=>`${x.name} (~${Math.round(x.d)} m)`).join(' · ')+'. Distancia en línea recta, no ruta.'));
-      }
-      if(p.locations?.length){const show=textNode('button','Ver en el mapa');show.addEventListener('click',()=>{el('local-map').contentWindow.postMessage({type:'focus',id:p.id},'*');el('local-map').scrollIntoView({behavior:'smooth',block:'center'});});details.append(show);}
-      card.append(details);section.append(card);
-    }container.append(section);
-  }
+function render(){
+ const q=normalize(el('search').value),state=el('state').value,scope=el('scope').value;
+ const rows=report.rows.filter(p=>(state==='all'||p.state===state)&&(scope==='all'||p.scope===scope)&&normalize([p.name,p.name_en,p.record,p.id,p.district,p.subdistrict,I18n.district(p.district),I18n.district(p.subdistrict)].join(' ')).includes(q));
+ el('shown').textContent=t('destinations',{count:rows.length});const container=el('results');container.replaceChildren();if(!rows.length){container.append(textNode('div',t(extraction?'empty':'emptySave'),'empty'));return;}
+ const groups=new Map();for(const p of rows){const district=I18n.district(p.district);if(!groups.has(district))groups.set(district,[]);groups.get(district).push(p);}
+ for(const [district,points]of groups){const section=textNode('section','','district');section.append(textNode('h3',`${district} · ${points.length}`));
+  for(const p of points){const card=textNode('article','','destination');card.dataset.id=p.id;const names=document.createElement('div');names.append(textNode('h4',I18n.name(p)));const alternate=I18n.alternate(p);if(alternate&&alternate!==I18n.name(p))names.append(textNode('span',alternate,'alias'));card.append(names,textNode('span',t(p.state),'badge '+p.state.replaceAll(' ','_')));
+   const details=textNode('div','','details');details.append(textNode('code',`${p.record||p.id} · ID ${p.id}`),textNode('p',I18n.reason(p)));
+   if(p.subdistrict&&p.subdistrict!==p.district)details.append(textNode('p',t('area',{area:I18n.district(p.subdistrict)})));if(p.note&&p.state!=='NO VERIFICADOS')details.append(textNode('p',I18n.note(p.note)));
+   if(p.locations?.length)details.append(textNode('span',t('coordinates',{coordinates:p.locations.map(x=>x.map(v=>I18n.number(v,1)).join(', ')).join(' / ')}),'coordinates'));else if(p.state==='PENDIENTES')details.append(textNode('span',t('noCoordinates'),'coordinates'));
+   if(p.state==='PENDIENTES'&&p.locations?.length){const nearby=report.rows.filter(x=>x.state==='DESCUBIERTOS'&&x.scope==='base'&&x.locations?.length).map(x=>({point:x,d:Math.min(...p.locations.flatMap(a=>x.locations.map(b=>Math.hypot(a[0]-b[0],a[1]-b[1]))))})).sort((a,b)=>a.d-b.d).slice(0,2);if(nearby.length)details.append(textNode('p',t('nearby',{points:nearby.map(x=>`${I18n.name(x.point)} (~${I18n.number(x.d)} m)`).join(' · ')})));}
+   if(p.locations?.length){const show=textNode('button',t('showMap'));show.addEventListener('click',()=>{pendingMapFocus=p.id;syncMap();el('local-map').scrollIntoView({behavior:'smooth',block:'center'});});details.append(show);}card.append(details);section.append(card);
+  }container.append(section);
+ }
 }
 for(const id of ['search','state','scope'])el(id).addEventListener('input',render);
-el('import').addEventListener('change',async event=>{
-  const f=event.target.files[0];if(!f)return;
-  try{if(f.size>10_000_000)throw Error('El archivo supera los 10 MB.');const candidate=JSON.parse(await f.text());TrackerCompare.validate(candidate);TrackerCompare.compare(reference,candidate);extraction=candidate;refresh();el('error').hidden=true;}
-  catch(e){el('error').textContent='No se han sustituido los datos: '+e.message;el('error').hidden=false;}
-  event.target.value='';
+el('language').addEventListener('change',()=>{I18n.setLanguage(el('language').value);refresh();});
+el('import').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;
+ try{if(file.size>10_000_000)throw Error('fileSize');const candidate=JSON.parse(await file.text());TrackerCompare.validate(candidate);TrackerCompare.compare(reference,candidate);extraction=candidate;lastError=null;refresh();}
+ catch(error){lastError=error instanceof SyntaxError?{key:'invalidJson'}:['fileSize','version','metadata','node','duplicates'].includes(error.message)?{key:error.message}:{key:'readError',params:{message:error.message}};showError();}event.target.value='';
 });
-el('download').addEventListener('click',()=>{
-  const fields=['state','name','name_en','district','record','id','scope','reason'];
-  const csv=s=>{let v=String(s??'');if(/^[=+@\-\t\r]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};
-  const content='\uFEFF'+[fields.join(','),...report.rows.map(p=>fields.map(k=>csv(p[k])).join(','))].join('\r\n');
-  const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='dataterms-comparacion.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+el('download').addEventListener('click',()=>{const headers=[t('csvState'),'state_code',t('csvName'),t('csvAlternate'),t('csvDistrict'),'record','id',t('csvScope'),t('csvReason')];
+ const csv=s=>{let v=String(s??'');if(/^[=+@\-\t\r]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};
+ const content='\uFEFF'+[headers.map(csv).join(','),...report.rows.map(p=>[t(p.state),p.state,I18n.name(p),I18n.alternate(p),I18n.district(p.district),p.record,p.id,t(p.scope),I18n.reason(p)].map(csv).join(','))].join('\r\n');
+ const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=t('csvFile');a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
-function syncMap(){const frame=el('local-map');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'states',states:(report?.rows||[]).map(p=>({id:p.id,state:p.state}))},'*');}
+function syncMap(){const frame=el('local-map');if(frame?.contentWindow){frame.contentWindow.postMessage({type:'states',language:I18n.language,states:(report?.rows||[]).map(p=>({id:p.id,state:p.state}))},'*');if(pendingMapFocus)frame.contentWindow.postMessage({type:'focus',id:pendingMapFocus},'*');}}
 window.addEventListener('message',event=>{if(event.source!==el('local-map').contentWindow)return;if(event.data?.type==='ready')syncMap();});
 el('load-map').addEventListener('click',()=>{const frame=el('official-map');frame.src='https://maps.piggyback.com/cyberpunk-2077/maps/night-city';frame.hidden=false;el('load-map').disabled=true;});
-try{refresh();}catch(e){el('error').hidden=false;el('error').textContent=e.message;}
+try{refresh();}catch(error){lastError={key:'readError',params:{message:error.message}};showError();}

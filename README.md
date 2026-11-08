@@ -2,7 +2,7 @@
 
 Find the fast-travel dataterms missing from **your own Cyberpunk 2077 save**, without comparing hundreds of map icons by hand.
 
-**Read-only · Local processing · Windows portable app · No game mods required · Spanish interface with English location names**
+**Read-only · Local processing · Windows portable app · No game mods required · English/Spanish interface with English location names**
 
 > **Preview release.** Verified save format: **Cyberpunk 2077 2.50, saveVersion 277 / gameVersion 2500**. Other versions are rejected. This is not a claim of compatibility with every Cyberpunk patch, console save format, or modded catalog.
 
@@ -100,3 +100,11 @@ Application code: [MIT](LICENSE). The vendored **CyberpunkPythonHacks** parser b
 ---
 
 **Español:** ejecuta el programa, elige expresamente el `sav.dat` actual y consulta `output/index.html`. El guardado original se conserva intacto. **DESCUBIERTOS** exige presencia del ID exacto; **PENDIENTES** exige además una extracción completa y un terminal verificado; **NO VERIFICADOS** conserva cualquier incertidumbre. El mapa local es esquemático; el mapa oficial con calles se carga opcionalmente por Internet. Solo se admite el formato 2.50 validado, no cualquier parche. El proyecto está desarrollado con ayuda sustancial de IA y se publica como versión preliminar.
+
+## Language / Idioma
+
+English is the default throughout the interface and offline map. Choose **Español** in the header to translate labels, destination names, evidence, filters, errors and CSV downloads. The browser remembers this preference when local storage is available. Both English and Spanish destination names remain searchable.
+
+The Windows reader offers a language choice before the save picker. For command-line use, pass `--lang en` (default) or `--lang es`. Each extraction creates `REPORT.md` in English and `RESULTADO.md` in Spanish. The generated dashboard starts in the reader's language unless the browser already has a saved preference. JSON keys and state codes remain stable for compatibility; translated CSV includes `state_code` alongside the readable status. Game record IDs are never translated.
+
+The optional external street-map iframe uses the map provider's own language settings. It is loaded only when requested.

@@ -58,3 +58,7 @@ Examples of historical labels requiring care: Zocalo / Megabuilding H10, Farrier
 - [Cyberpunk25SaveEditor](https://github.com/desfpc/Cyberpunk25SaveEditor), inspected for its documented 277/2500 version gate; its editor is not used.
 
 This is an AI-assisted preview, not a guarantee of perfect extraction for every mod stack. Please propose catalog changes with exact IDs, version and minimal evidence, not just map-icon screenshots.
+
+## v0.2.0 localization
+
+English is the default even with a Spanish browser locale. Browser tests cover switching loaded results and the offline map between English and Spanish, retaining comparison counts, searching bilingual names, translated error paths, CSV download, and persistence after reload. Language changes do not change discovery evidence or missing-point rules. The optional CET exporter has bilingual controls but remains untested inside the game.

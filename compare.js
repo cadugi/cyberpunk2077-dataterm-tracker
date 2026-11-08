@@ -1,13 +1,13 @@
 (function (root) {
   'use strict';
   function validate(ex) {
-    if (!ex || ex.schema !== 1 || ex.game_version !== '2.50') throw Error('Versión o formato no admitidos. Se requiere una extracción 2.50.');
-    if (!Array.isArray(ex.points) || !Array.isArray(ex.errors) || typeof ex.complete !== 'boolean' || ex.registered_count !== ex.points.length) throw Error('Extracción incompleta o recuento inconsistente.');
+    if (!ex || ex.schema !== 1 || ex.game_version !== '2.50') throw Error('version');
+    if (!Array.isArray(ex.points) || !Array.isArray(ex.errors) || typeof ex.complete !== 'boolean' || ex.registered_count !== ex.points.length) throw Error('metadata');
     const keys = new Set();
     for (const p of ex.points) {
-      if (!p || typeof p.id !== 'string' || !/^\d+$/.test(p.id) || Number(p.id) >= 2 ** 40 || typeof p.is_ep1 !== 'boolean') throw Error('Nodo sin identificador o estado fiable.');
+      if (!p || typeof p.id !== 'string' || !/^\d+$/.test(p.id) || Number(p.id) >= 2 ** 40 || typeof p.is_ep1 !== 'boolean') throw Error('node');
       const key = JSON.stringify([p.id, p.marker ?? null]);
-      if (keys.has(key)) throw Error('Hay nodos duplicados en la extracción.');
+      if (keys.has(key)) throw Error('duplicates');
       keys.add(key);
     }
     return ex;
