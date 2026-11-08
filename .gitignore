@@ -15,3 +15,12 @@ comparison.json
 RESULTADO.md
 *.log
 private-tests/
+
+# Imagenes de mapa locales (arte de terceros / CD PROJEKT RED: no redistribuir)
+map-background.*
+cyberpunk-2077-full-world-map.*
+descarga.png
+night-city-map.png
+
+# Extracted map tiles; the public source archive is stored in assets/.
+tiles/

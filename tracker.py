@@ -13,18 +13,6 @@ def reason(p):
     if p['state']=='PENDIENTES':return tr('reasonMissing')
     if p['scope']=='unknown':return tr('reasonUnknown')
     return (LOCALES['notes'].get(p.get('note'),tr('reasonUnverified')) if LANG=='en' else p.get('note')) or tr('reasonUnverified')
-def choose_language(initial):
-    import tkinter as tk
-    from tkinter import ttk
-    root=tk.Tk();root.title('Dataterm Tracker');root.resizable(False,False)
-    value=tk.StringVar(value=initial);result=[]
-    label=ttk.Label(root,padding=16);label.pack()
-    box=ttk.Frame(root,padding=12);box.pack()
-    def update():label.config(text=LOCALES[value.get()]['readerIntro']);button.config(text=LOCALES[value.get()]['readerContinue'])
-    for code,name in [('en','English'),('es','Espa\u00f1ol')]:ttk.Radiobutton(box,text=name,variable=value,value=code,command=update).pack(side='left',padx=12)
-    button=ttk.Button(root,command=lambda:(result.append(value.get()),root.destroy()));button.pack(pady=16);update();root.mainloop()
-    return result[0] if result else None
-
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def write_json(p,data):p.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 def parse_copy(folder):
@@ -98,10 +86,14 @@ def csv_write(path,rows,fields):
 def publish(ex,output,lang="en"):
     global LANG
     LANG=lang
+    if not (RESOURCE_ROOT/'tiles').is_dir() and not getattr(sys,'frozen',False):
+        from scripts.prepare_tiles import prepare
+        prepare(RESOURCE_ROOT)
     validate(ex);ref=json.loads((RESOURCE_ROOT/'data/reference.json').read_text(encoding='utf-8'));report=compare(ref,ex)
     output.mkdir(parents=True,exist_ok=True)
     for name in ['index.html','style.css','app.js','compare.js','reference.js','map.html','map.js','locales.js','i18n.js']:
         shutil.copy2(RESOURCE_ROOT/name,output/name)
+    if (RESOURCE_ROOT/'tiles').is_dir():shutil.copytree(RESOURCE_ROOT/'tiles',output/'tiles',dirs_exist_ok=True)
     write_json(output/'extraction.json',ex);write_json(output/'comparison.json',report)
     csv_write(output/'extraction.csv',ex['points'],['id','marker','is_ep1'])
     csv_write(output/'comparison.csv',report['rows'],['id','record','name','name_en','district','scope','state','reason'])
@@ -134,7 +126,7 @@ def publish(ex,output,lang="en"):
 def main():
     global LANG
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--check-runtime',action='store_true',help='Check bundled browser-opening module without reading saves or opening windows')
+    parser.add_argument('--check-runtime',action='store_true',help='Check bundled browser module without opening windows')
     parser.add_argument('--lang',choices=['en','es'],default='en',help='Language: English (default) or Spanish')
     parser.add_argument('--save-file',type=Path,help='Path to sav.dat (original is only read to make a copy)')
     parser.add_argument('--saves-dir',type=Path,help='Custom save folder (supports cross-progression copies)')
@@ -159,9 +151,6 @@ def main():
         if not candidates:raise ValueError(tr('noSaves'))
         source=max(candidates,key=lambda p:(p/'sav.dat').stat().st_mtime)
     else:
-        chosen=choose_language(LANG)
-        if chosen is None:return
-        LANG=chosen
         import tkinter as tk
         from tkinter import filedialog
         window=tk.Tk();window.withdraw()

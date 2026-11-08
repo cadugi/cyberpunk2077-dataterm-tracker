@@ -8,9 +8,12 @@ Find the fast-travel dataterms missing from **your own Cyberpunk 2077 save**, wi
 
 ## Download and use
 
+**[Download Windows x64 ZIP directly](https://github.com/cadugi/cyberpunk2077-dataterm-tracker/releases/latest/download/Cyberpunk-Dataterm-Tracker-v0.4.0-Windows-x64.zip)**
+
+
 1. Open [Releases](https://github.com/cadugi/cyberpunk2077-dataterm-tracker/releases) and download the Windows x64 ZIP when the build is available.
 2. Extract the ZIP and run `Cyberpunk-Dataterm-Tracker.exe`.
-3. **Choose the current `sav.dat` yourself.** Save in the game first and wait until saving finishes. The picker normally opens `%USERPROFILE%\Saved Games\CD Projekt Red\Cyberpunk 2077`.
+3. **Choose your most recent `sav.dat` yourself.** The app opens the file picker right away. Save in the game first and wait until saving finishes. The picker normally opens `%USERPROFILE%\Saved Games\CD Projekt Red\Cyberpunk 2077`.
 4. The app creates a private snapshot in `output/backups/`, checks SHA-256 before/after, reads the snapshot and opens `output/index.html` in your browser.
 5. Browse **discovered**, **verified missing**, and **unverified** points by district. Search Spanish names, English names or internal IDs. Use the embedded map to inspect verified coordinates.
 
@@ -111,14 +114,12 @@ Application code: [MIT](LICENSE). The vendored **CyberpunkPythonHacks** parser b
 
 English is the default throughout the interface and offline map. Choose **Español** in the header to translate labels, destination names, evidence, filters, errors and CSV downloads. The browser remembers this preference when local storage is available. Both English and Spanish destination names remain searchable.
 
-The Windows reader offers a language choice before the save picker. For command-line use, pass `--lang en` (default) or `--lang es`. Each extraction creates `REPORT.md` in English and `RESULTADO.md` in Spanish. The generated dashboard starts in the reader's language unless the browser already has a saved preference. JSON keys and state codes remain stable for compatibility; translated CSV includes `state_code` alongside the readable status. Game record IDs are never translated.
+The Windows reader goes straight to the save picker (it asks you to pick your most recent save); change the language afterwards with the selector in the report. For command-line use, pass `--lang en` (default) or `--lang es`. Each extraction creates `REPORT.md` in English and `RESULTADO.md` in Spanish. The generated dashboard starts in the reader's language unless the browser already has a saved preference. JSON keys and state codes remain stable for compatibility; translated CSV includes `state_code` alongside the readable status. Game record IDs are never translated.
 
 The optional external street-map iframe uses the map provider's own language settings. It is loaded only when requested.
 
-## v0.3.0
+## v0.4.0
 
-Redesigned offline frontend with a cyberpunk-inspired visual theme, responsive destination cards, refreshed embedded map styling and bilingual import notifications. English remains the default with a Spanish selector. Save parsing, reference IDs and conservative missing-point classification are unchanged.
+Final redesigned English/Spanish frontend, offline map imagery with zoom-level tile loading and corrected browser opening in the Windows executable. The portable ZIP needs no Python, server or game mod. Extract it and run the EXE, then select your current `sav.dat`. The supported save format remains Cyberpunk 2.50 (277/2500).
 
-## v0.3.1 fix
-
-Includes the Python `webbrowser` module in the portable executable, fixing the error after selecting a save when the app opens the generated dashboard. If v0.3.0 already produced your report, you can open `output/index.html` manually. Save parsing is unchanged.
+For source users: run `python scripts/prepare_tiles.py` before opening `index.html` directly or running browser tests. The reader and Windows build restore the tiles automatically. Versioned archive parts under `assets/` preserve the offline imagery without thousands of separate binary files. The archive checksum is verified before extraction. Map imagery is third-party game artwork, outside the MIT license on this tool’s code; see THIRD_PARTY_NOTICES.md.

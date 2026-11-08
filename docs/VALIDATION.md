@@ -70,3 +70,7 @@ The redesigned frontend passed all 12 Python tests, JavaScript classification te
 ## v0.3.1 runtime packaging fix
 
 The previous frozen tests used `--no-open`, so they did not exercise the dynamic webbrowser import. The import is now static and explicitly included in PyInstaller. A regression test exercises the normal report-opening path with a mocked browser launcher. Windows CI checks the frozen runtime with `--check-runtime` without opening a window or reading a save.
+
+## v0.4.0 final frontend
+
+Includes the user-provided final frontend, offline map tiles and the v0.3.1 browser-module fix. Source assets are stored in checksummed ZIP parts and restored with scripts/prepare_tiles.py; the Windows executable embeds the restored tiles. Map-image alignment is approximate. Save parsing and catalog evidence are unchanged. In-game CET validation remains outstanding.

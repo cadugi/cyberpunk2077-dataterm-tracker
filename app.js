@@ -49,5 +49,4 @@ el('download').addEventListener('click',()=>{const headers=[t('csvState'),'state
 });
 function syncMap(){const frame=el('local-map');if(frame?.contentWindow){frame.contentWindow.postMessage({type:'states',language:I18n.language,states:(report?.rows||[]).map(p=>({id:p.id,state:p.state}))},'*');if(pendingMapFocus)frame.contentWindow.postMessage({type:'focus',id:pendingMapFocus},'*');}}
 window.addEventListener('message',event=>{if(event.source!==el('local-map').contentWindow)return;if(event.data?.type==='ready')syncMap();});
-el('load-map').addEventListener('click',()=>{const frame=el('official-map');frame.src='https://maps.piggyback.com/cyberpunk-2077/maps/night-city';frame.hidden=false;el('load-map').disabled=true;});
 try{refresh();}catch(error){lastError={key:'readError',params:{message:error.message}};showError();}
