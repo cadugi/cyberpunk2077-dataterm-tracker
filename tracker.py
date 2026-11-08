@@ -1,6 +1,6 @@
 """Read-only Cyberpunk dataterm exporter. All parsing runs on a snapshot copy."""
 from pathlib import Path
-import argparse,csv,datetime,hashlib,json,os,shutil,struct,sys,traceback
+import argparse,csv,datetime,hashlib,json,os,shutil,struct,sys,traceback,webbrowser
 ROOT=Path(__file__).resolve().parent
 RESOURCE_ROOT=Path(getattr(sys,'_MEIPASS',ROOT))
 LOCALES=json.loads((RESOURCE_ROOT/'data/locales.json').read_text(encoding='utf-8'))
@@ -134,6 +134,7 @@ def publish(ex,output,lang="en"):
 def main():
     global LANG
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check-runtime',action='store_true',help='Check bundled browser-opening module without reading saves or opening windows')
     parser.add_argument('--lang',choices=['en','es'],default='en',help='Language: English (default) or Spanish')
     parser.add_argument('--save-file',type=Path,help='Path to sav.dat (original is only read to make a copy)')
     parser.add_argument('--saves-dir',type=Path,help='Custom save folder (supports cross-progression copies)')
@@ -141,12 +142,15 @@ def main():
     parser.add_argument('--import-json',type=Path)
     parser.add_argument('--output',type=Path,help='Output directory; default: next to executable/source')
     parser.add_argument('--no-open',action='store_true');args=parser.parse_args()
+    if args.check_runtime:
+        assert callable(webbrowser.open)
+        return
     LANG=args.lang
     portable=Path(sys.executable).resolve().parent if getattr(sys,'frozen',False) else ROOT
     output=(args.output or portable/'output').resolve()
     if args.import_json:
         publish(json.loads(args.import_json.read_text(encoding='utf-8-sig')),output,LANG)
-        if not args.no_open:__import__('webbrowser').open((output/'index.html').as_uri())
+        if not args.no_open:webbrowser.open((output/'index.html').as_uri())
         return
     saves=args.saves_dir or Path(os.environ.get('USERPROFILE',str(Path.home())))/'Saved Games/CD Projekt Red/Cyberpunk 2077'
     if args.save_file:source=args.save_file.resolve().parent
@@ -177,7 +181,7 @@ def main():
     ex.update(slot=source.name,save_sha256=before,extracted_at=datetime.datetime.now().astimezone().isoformat(),save_modified_at=datetime.datetime.fromtimestamp((source/'sav.dat').stat().st_mtime).astimezone().isoformat())
     write_json(destination/'integrity.json',{'sha256_before':before,'sha256_after':digest(source/'sav.dat'),'copy_sha256':digest(destination/'sav.dat'),'game_version':2500,'save_version':277})
     publish(ex,output,LANG)
-    if not args.no_open:__import__('webbrowser').open((output/'index.html').as_uri())
+    if not args.no_open:webbrowser.open((output/'index.html').as_uri())
 if __name__=='__main__':
     try:main()
     except Exception as e:

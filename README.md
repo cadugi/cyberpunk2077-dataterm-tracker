@@ -118,3 +118,7 @@ The optional external street-map iframe uses the map provider's own language set
 ## v0.3.0
 
 Redesigned offline frontend with a cyberpunk-inspired visual theme, responsive destination cards, refreshed embedded map styling and bilingual import notifications. English remains the default with a Spanish selector. Save parsing, reference IDs and conservative missing-point classification are unchanged.
+
+## v0.3.1 fix
+
+Includes the Python `webbrowser` module in the portable executable, fixing the error after selecting a save when the app opens the generated dashboard. If v0.3.0 already produced your report, you can open `output/index.html` manually. Save parsing is unchanged.

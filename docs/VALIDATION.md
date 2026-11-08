@@ -66,3 +66,7 @@ English is the default even with a Spanish browser locale. Browser tests cover s
 ## v0.3.0 frontend redesign
 
 The redesigned frontend passed all 12 Python tests, JavaScript classification tests and the headless Edge browser workflow on Windows: clean startup, JSON import, error preservation, partial-extraction safety, bilingual search and language switching, map focus/zoom/reset, CSV export, mobile width and no automatic external network requests. The save parser, reference catalog and comparison logic are unchanged from v0.2.0.
+
+## v0.3.1 runtime packaging fix
+
+The previous frozen tests used `--no-open`, so they did not exercise the dynamic webbrowser import. The import is now static and explicitly included in PyInstaller. A regression test exercises the normal report-opening path with a mocked browser launcher. Windows CI checks the frozen runtime with `--check-runtime` without opening a window or reading a save.
