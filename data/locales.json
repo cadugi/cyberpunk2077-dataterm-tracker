@@ -294,6 +294,7 @@
     "No se ha verificado un terminal activo para este registro. Su ausencia se conserva como NO VERIFICADA.": "An active terminal has not been verified for this record. Its absence remains UNVERIFIED.",
     "Phantom Liberty: excluido del objetivo del juego base; se conserva el estado exportado.": "Phantom Liberty: excluded from the base-game objective; the exported state is retained.",
     "Plaza Ellison: registro existente, sin vínculo de terminal actual confirmado. No confundir con Metro: Plaza Ellison.": "Ellison Plaza: the record exists, but a current terminal link has not been confirmed. Do not confuse it with Metro: Ellison Plaza.",
-    "Registro oculto, de prueba o especial; no se infiere un pendiente.": "Hidden, test or special record; no missing destination is inferred."
+    "Registro oculto, de prueba o especial; no se infiere un pendiente.": "Hidden, test or special record; no missing destination is inferred.",
+    "Confirmado en el juego: no existe un terminal físico en este punto. Registro conservado solo para reconocer el ID; nunca se marca como pendiente.": "Confirmed in-game: there is no physical terminal at this location. The record is kept only so the ID is recognised; it is never reported as missing."
   }
 }

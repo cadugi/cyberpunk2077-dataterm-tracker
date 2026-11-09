@@ -32,7 +32,7 @@ class TrackerTests(unittest.TestCase):
     def test_runtime_mismatch_suppresses_pending(self):
         ex=extraction();ex.update(source='cet',engine_achievement_count=555);self.assertEqual(compare(REF,ex)['counts']['PENDIENTES'],0)
     def test_reference_invariants(self):
-        self.assertEqual(len(REF['points']),245);self.assertEqual(REF['location_groups_total'],166);self.assertEqual(len({p['id'] for p in REF['points']}),245)
+        self.assertEqual(len(REF['points']),245);self.assertEqual(REF['location_groups_total'],164);self.assertEqual(len({p['id'] for p in REF['points']}),245)
         for p in REF['points']:
             if p['verified_destination']:self.assertTrue(p['world_evidence']);self.assertEqual(p['scope'],'base')
     def test_portable_output_has_no_personal_metadata(self):

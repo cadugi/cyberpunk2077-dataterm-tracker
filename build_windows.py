@@ -12,7 +12,7 @@ def main():
         args+=['--add-data',f'{ROOT/name};{destination}']
     if (ROOT/'tiles').is_dir():args+=['--add-data',f"{ROOT/'tiles'};tiles"]
     args+=[str(ROOT/'tracker.py')];subprocess.run(args,cwd=ROOT,check=True)
-    release=ROOT/'dist';exe=release/'Cyberpunk-Dataterm-Tracker.exe';archive=release/'Cyberpunk-Dataterm-Tracker-v0.4.0-Windows-x64.zip'
+    release=ROOT/'dist';exe=release/'Cyberpunk-Dataterm-Tracker.exe';archive=release/'Cyberpunk-Dataterm-Tracker-v0.4.1-Windows-x64.zip'
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED) as z:
         for p in [exe,ROOT/'README.md',ROOT/'LICENSE',ROOT/'THIRD_PARTY_NOTICES.md']:
             z.write(p,p.name)

@@ -4,15 +4,12 @@ Find the fast-travel dataterms missing from **your own Cyberpunk 2077 save**, wi
 
 **Read-only · Local processing · Windows portable app · No game mods required · English/Spanish interface with English location names**
 
-> **Preview release.** Verified save format: **Cyberpunk 2077 2.50, saveVersion 277 / gameVersion 2500**. Other versions are rejected. This is not a claim of compatibility with every Cyberpunk patch, console save format, or modded catalog.
+> **Final release (catalog remains specific to the validated format).** Verified save format: **Cyberpunk 2077 2.50, saveVersion 277 / gameVersion 2500**. Other versions are rejected. This is not a claim of compatibility with every Cyberpunk patch, console save format, or modded catalog.
 
 ## Download and use
 
-**[Download Windows x64 ZIP directly](https://github.com/cadugi/cyberpunk2077-dataterm-tracker/releases/latest/download/Cyberpunk-Dataterm-Tracker-v0.4.0-Windows-x64.zip)**
-
-
-1. Open [Releases](https://github.com/cadugi/cyberpunk2077-dataterm-tracker/releases) and download the Windows x64 ZIP when the build is available.
-2. Extract the ZIP and run `Cyberpunk-Dataterm-Tracker.exe`.
+1. [Download and extract the Windows x64 ZIP](https://github.com/cadugi/cyberpunk2077-dataterm-tracker/releases/latest/download/Cyberpunk-Dataterm-Tracker-v0.4.1-Windows-x64.zip).
+2. Run `Cyberpunk-Dataterm-Tracker.exe`.
 3. **Choose your most recent `sav.dat` yourself.** The app opens the file picker right away. Save in the game first and wait until saving finishes. The picker normally opens `%USERPROFILE%\Saved Games\CD Projekt Red\Cyberpunk 2077`.
 4. The app creates a private snapshot in `output/backups/`, checks SHA-256 before/after, reads the snapshot and opens `output/index.html` in your browser.
 5. Browse **discovered**, **verified missing**, and **unverified** points by district. Search Spanish names, English names or internal IDs. Use the embedded map to inspect verified coordinates.
@@ -48,13 +45,13 @@ Opening the repository's `index.html` directly starts **without anyone's save lo
 - Nearest discovered dataterms where coordinates are available; distances are straight lines, not guaranteed traversable routes.
 - An optional manual CET export script in `cet/DatatermTracker`. It is not installed automatically and remains **experimental: mocked/syntax tested, not tested in-game**.
 
-## Why 166, 245 and 157 are different numbers
+## Why 164, 245 and 157 are different numbers
 
-**166 is the number of location groups in this catalog**, including Dogtown and treating Panam's moving camp as one group. The catalog retains **245 internal FastTravelPoint records**, including hidden metro entries, historical records and development destinations. Neither number is a universal mandatory achievement checklist.
+**164 is the number of location groups in this catalog**, including Dogtown and treating Panam's moving camp as one group. The catalog retains **245 internal FastTravelPoint records**, including hidden metro entries, historical records and development destinations. Neither number is a universal mandatory achievement checklist.
 
 For the inspected 2.50 files, `Achievements.GetMeThereScottie.thresholdValue` is **157**. The system also has a separate value of 159. Its achievement update code counts registered nodes whose record has `ShowOnWorldMap=true` and whose saved flag is `isEP1=false`, and sends updates on changed **even counts**. The percentage shown by this app reconstructs that counter; it does **not** read or change Steam's achievement state.
 
-The public catalog currently verifies **156 base record IDs against typed terminal data** for asserting a missing destination. It retains uncertainty for both camp variants and four other base records lacking sufficient active-terminal proof. A registered exact ID is still recognized as discovered. An absent uncertain ID stays **NO VERIFICADOS**. The coverage number is not an achievement requirement.
+The public catalog currently verifies **154 base record IDs against typed terminal data** for asserting a missing destination. It retains uncertainty for both camp variants and four other base records lacking sufficient active-terminal proof. A registered exact ID is still recognized as discovered. An absent uncertain ID stays **NO VERIFICADOS**. The coverage number is not an achievement requirement. `Metro: Wellsprings` (`hey_spr_metro_ftp_01`) and `Megabuilding H4` (`std_arr_dataterm_05`) were removed from the missing list in catalog revision 2026-11-09-public-2: the maintainer unlocked the achievement with both still unregistered and confirmed in-game that no terminal exists at those coordinates.
 
 There are published lists with different totals, duplicated names and old metro names. They were cross-checked as secondary references, not used to manufacture missing IDs. See [catalog methodology and sources](docs/VALIDATION.md).
 
@@ -118,8 +115,8 @@ The Windows reader goes straight to the save picker (it asks you to pick your mo
 
 The optional external street-map iframe uses the map provider's own language settings. It is loaded only when requested.
 
-## v0.4.0
+## v0.4.1 catalog correction
 
-Final redesigned English/Spanish frontend, offline map imagery with zoom-level tile loading and corrected browser opening in the Windows executable. The portable ZIP needs no Python, server or game mod. Extract it and run the EXE, then select your current `sav.dat`. The supported save format remains Cyberpunk 2.50 (277/2500).
+Updated to reference revision `2026-11-09-public-2`: the two records confirmed to have no physical terminal are excluded from pending destinations. The catalog contains 164 location groups, 245 recognised internal records, and 154 verified base game destinations. This reduces false pending results while retaining both IDs for recognition.
 
-For source users: run `python scripts/prepare_tiles.py` before opening `index.html` directly or running browser tests. The reader and Windows build restore the tiles automatically. Versioned archive parts under `assets/` preserve the offline imagery without thousands of separate binary files. The archive checksum is verified before extraction. Map imagery is third-party game artwork, outside the MIT license on this tool’s code; see THIRD_PARTY_NOTICES.md.
+To build from source or view the HTML map locally, run `python scripts/prepare_tiles.py` once to restore the bundled offline map tiles. The Windows reader and CI build do this automatically.

@@ -50,7 +50,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view v0.4.0 --repo "$env:GITHUB_REPOSITORY" 2>$null
+          gh release view v0.4.1 --repo "$env:GITHUB_REPOSITORY" 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create v0.4.0 dist/*.zip dist/SHA256SUMS.txt --repo "$env:GITHUB_REPOSITORY" --target "$env:GITHUB_SHA" --latest --title "v0.4.0 — Missing Fast Travel Points / Frequent Flyer Tracker" --notes "Final redesigned bilingual frontend, bundled offline map imagery and fixed browser opening. Developed with AI assistance. English by default with a Spanish language selector. Read-only local save reader for verified Cyberpunk 2077 2.50 format 277/2500. Includes bundled offline map and optional official map iframe. Unsigned Windows executable. Please read README and docs/VALIDATION.md before use."
+            gh release create v0.4.1 dist/*.zip dist/SHA256SUMS.txt --repo "$env:GITHUB_REPOSITORY" --target "$env:GITHUB_SHA" --latest --title "v0.4.1 — Missing Fast Travel Points / Frequent Flyer Tracker" --notes "Updated validated catalog removes two extra terminal records. Final bilingual frontend, bundled offline map and fixed browser opening. Developed with AI assistance. English by default with a Spanish language selector. Read-only local save reader for verified Cyberpunk 2077 2.50 format 277/2500. Includes bundled offline map and optional official map iframe. Unsigned Windows executable. Please read README and docs/VALIDATION.md before use."
           }

@@ -13,9 +13,9 @@ Raw sectors, decompiled scripts, full localization and the maintainer's real sav
 
 ## Coverage and uncertainty
 
-245 internal records are retained. Base/expansion destinations form **166 groups** when the two Aldecaldos camp variants are grouped together. This is a directory count, not a proof that every group is simultaneously reachable or required.
+245 internal records are retained. Base/expansion destinations form **164 groups** when the two Aldecaldos camp variants are grouped together. This is a directory count, not a proof that every group is simultaneously reachable or required.
 
-**156 base IDs have direct terminal evidence and are eligible for a missing-point assertion.** Six base record IDs remain conservative if absent:
+**154 base IDs have direct terminal evidence and are eligible for a missing-point assertion.** Six base record IDs remain conservative if absent:
 
 - Both `bls_nth_dataterm_03` and `bls_nth_dataterm_06`: mission-dependent camp variants. Do not demand a second camp merely because its ID is absent.
 - `wat_lch_dataterm_08`: Ellison Plaza; distinct from metro records with similar names.
@@ -37,7 +37,7 @@ The following independent references were checked on 2026-11-08:
 - [Cyberpunk2077-map.com marker index](https://cyberpunk2077-map.com/night-city): checked as an additional map directory. Its many marker categories cannot be equated to dataterms or achievement requirements.
 - [Cyberpunk Wiki's dataterm list](https://cyberpunk.fandom.com/wiki/Cyberpunk_2077_Fast_Travel_Dataterms): discovered but direct access was restricted; not counted as a successfully audited list.
 
-Examples of historical labels requiring care: Zocalo / Megabuilding H10, Farrier St / Farrier & Ferguson, Ellison St / Ellison Plaza, Monroe St / Monroe & Sagan. Republic Way, Market St and Stadium labels need record/marker evidence; a similar string alone does not merge them. There is no claim that all 166 entries in every online list have been independently visited in-game.
+Examples of historical labels requiring care: Zocalo / Megabuilding H10, Farrier St / Farrier & Ferguson, Ellison St / Ellison Plaza, Monroe St / Monroe & Sagan. Republic Way, Market St and Stadium labels need record/marker evidence; a similar string alone does not merge them. There is no claim that every entry in every online list has been independently visited in-game.
 
 ## Actual tests
 
@@ -63,14 +63,10 @@ This is an AI-assisted preview, not a guarantee of perfect extraction for every 
 
 English is the default even with a Spanish browser locale. Browser tests cover switching loaded results and the offline map between English and Spanish, retaining comparison counts, searching bilingual names, translated error paths, CSV download, and persistence after reload. Language changes do not change discovery evidence or missing-point rules. The optional CET exporter has bilingual controls but remains untested inside the game.
 
-## v0.3.0 frontend redesign
+## Catalog correction (2026-11-09)
 
-The redesigned frontend passed all 12 Python tests, JavaScript classification tests and the headless Edge browser workflow on Windows: clean startup, JSON import, error preservation, partial-extraction safety, bilingual search and language switching, map focus/zoom/reset, CSV export, mobile width and no automatic external network requests. The save parser, reference catalog and comparison logic are unchanged from v0.2.0.
+`hey_spr_metro_ftp_01` (Metro: Wellsprings) and `std_arr_dataterm_05` (Megabuilding H4) appeared as verified terminals from sector data, but a save with the achievement already unlocked (158 registered, threshold 157) still lacked both, and visiting the coordinates in-game showed no terminal. They are now `excluded`, have no coordinates, and are never reported as missing. Their IDs stay in the catalog so a save that does register them is still recognised.
 
-## v0.3.1 runtime packaging fix
+## v0.4.1 catalog update
 
-The previous frozen tests used `--no-open`, so they did not exercise the dynamic webbrowser import. The import is now static and explicitly included in PyInstaller. A regression test exercises the normal report-opening path with a mocked browser launcher. Windows CI checks the frozen runtime with `--check-runtime` without opening a window or reading a save.
-
-## v0.4.0 final frontend
-
-Includes the user-provided final frontend, offline map tiles and the v0.3.1 browser-module fix. Source assets are stored in checksummed ZIP parts and restored with scripts/prepare_tiles.py; the Windows executable embeds the restored tiles. Map-image alignment is approximate. Save parsing and catalog evidence are unchanged. In-game CET validation remains outstanding.
+The local 2.50 evidence update identifies two registered records without a physical terminal. They remain recognised by ID but are excluded from the destination list: 164 location groups and 154 validated base targets. Coordinates and world evidence for those records were removed to avoid presenting them as places to visit. Save extraction logic is unchanged.

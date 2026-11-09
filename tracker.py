@@ -86,9 +86,6 @@ def csv_write(path,rows,fields):
 def publish(ex,output,lang="en"):
     global LANG
     LANG=lang
-    if not (RESOURCE_ROOT/'tiles').is_dir() and not getattr(sys,'frozen',False):
-        from scripts.prepare_tiles import prepare
-        prepare(RESOURCE_ROOT)
     validate(ex);ref=json.loads((RESOURCE_ROOT/'data/reference.json').read_text(encoding='utf-8'));report=compare(ref,ex)
     output.mkdir(parents=True,exist_ok=True)
     for name in ['index.html','style.css','app.js','compare.js','reference.js','map.html','map.js','locales.js','i18n.js']:

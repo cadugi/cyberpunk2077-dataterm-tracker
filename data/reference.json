@@ -2935,30 +2935,15 @@
       "district": "Heywood",
       "subdistrict": "Wellsprings",
       "district_record": "Districts.Wellsprings",
-      "scope": "base",
+      "scope": "excluded",
       "show_on_world_map": true,
       "ep1_record": false,
-      "verified_destination": true,
-      "markers": [
-        "#hey_spr_metro_ftp_01"
-      ],
-      "locations": [
-        [
-          -2118.219482421875,
-          -694.199462890625,
-          6.869999885559082
-        ]
-      ],
-      "world_evidence": [
-        {
-          "sector": "exterior_-34_-11_0_0.streamingsector",
-          "package_version": 4
-        }
-      ],
-      "evidence": [
-        "typed-world-instance"
-      ],
-      "note": "",
+      "verified_destination": false,
+      "markers": [],
+      "locations": [],
+      "world_evidence": [],
+      "evidence": [],
+      "note": "Confirmado en el juego: no existe un terminal físico en este punto. Registro conservado solo para reconocer el ID; nunca se marca como pendiente.",
       "location_group": "163039130641"
     },
     {
@@ -3880,30 +3865,15 @@
       "district": "Santo Domingo",
       "subdistrict": "Arroyo",
       "district_record": "Districts.Arroyo",
-      "scope": "base",
+      "scope": "excluded",
       "show_on_world_map": true,
       "ep1_record": false,
-      "verified_destination": true,
-      "markers": [
-        "#std_arr_dataterm_05"
-      ],
-      "locations": [
-        [
-          -966.773193359375,
-          -1772.5238037109375,
-          11.150108337402344
-        ]
-      ],
-      "world_evidence": [
-        {
-          "sector": "exterior_-16_-28_0_0.streamingsector",
-          "package_version": 2
-        }
-      ],
-      "evidence": [
-        "typed-world-instance"
-      ],
-      "note": "",
+      "verified_destination": false,
+      "markers": [],
+      "locations": [],
+      "world_evidence": [],
+      "evidence": [],
+      "note": "Confirmado en el juego: no existe un terminal físico en este punto. Registro conservado solo para reconocer el ID; nunca se marca como pendiente.",
       "location_group": "158024483622"
     },
     {
@@ -8102,7 +8072,7 @@
       "location_group": "158322033123"
     }
   ],
-  "location_groups_total": 166,
-  "validated_base_targets": 156,
-  "catalog_revision": "2026-11-08-public-1"
+  "location_groups_total": 164,
+  "validated_base_targets": 154,
+  "catalog_revision": "2026-11-09-public-2"
 }
